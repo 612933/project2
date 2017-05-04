@@ -1,0 +1,49 @@
+MAPPER
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.*;
+
+public class mpr extends Mapper<LongWritable, Text,Text,NullWritable>{
+Text outkey=new Text();
+NullWritable outvalue;
+public void map(LongWritable key, Text value, Context context)
+ throws IOException, InterruptedException{
+ 
+       String a = value.toString();
+       StringBuilder sb = new StringBuilder();
+       for(int i=0;i<a.length();i++)
+       {
+       if(a.charAt(i)=='"')
+       { 
+           sb.append(a.charAt(i));
+           i++;
+           while(a.charAt(i)!='"')
+           {
+               if(a.charAt(i)!=',')
+               {
+                   
+                   sb.append(a.charAt(i));
+               }
+               i++;
+           }
+           sb.append(a.charAt(i));
+       }
+       else
+           sb.append(a.charAt(i));
+       }
+       outkey.set(sb.toString());
+       context.write(outkey,outvalue);
+        
+ 
+
+}
+
+}
