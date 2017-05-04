@@ -1,0 +1,43 @@
+1. Write a pig script to find no of complaints which got timely response
+
+a = load '/home/acadgild/Desktop/hive/custcomp.txt' using PigStorage(',') as (dat:chararray ,product:chararray, 
+sub_product:chararray ,issue:chararray ,sub_issue:chararray ,ccn:chararray ,cpr:chararray ,company:chararray 
+,state:chararray ,zip_code:chararray ,s_via:chararray ,ds_comp:chararray ,cr:chararray ,tr:chararray ,con_dis:chararray
+,c_id:chararray );
+
+
+ b = FILTER a by tr=='Yes'
+ c = group b all;
+d = foreach c generate COUNT(b.dat) as total_count;
+store into '/home/acadgild/op1';
+
+
+
+2. Write a pig script to find no of complaints where consumer forum forwarded the
+complaint same day they received to respective company
+
+ b = FILTER a by dat==ds_comp;
+c = group b all;
+d = foreach c generate COUNT(b.c_id);
+store d into '/home/acadgild/op2';
+
+
+3. Write a pig script to find list of companies topping in complaint chart (companies with
+maximum number of complaints)
+
+b = FOREACH a GENERATE company;
+c = group b by company;
+d = foreach c generate group,COUNT(b.company) as no;
+e = order d by no desc;
+f = limit e 10;
+store f into '/home/acadgild/op3';
+
+4. Write a pig script to find no of complaints filed with product type has "Debt collection"
+for the year 2015
+
+b= foreach a generate product,SUBSTRING(dat,6,10) as yr;
+c= filter b by product=='Debt collection';
+d= filter c by yr=='2015';
+e = group d all;
+f= foreach e  generate COUNT(d.product);
+store f into '/home/acadgild/op4';
